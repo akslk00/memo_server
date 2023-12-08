@@ -4,7 +4,7 @@ from flask_restful import Api
 from config import Config
 from resources.memo import MemoReigsterResource, MemoResource
 
-from resources.user import UserLoginResource, UserReigsterResource
+from resources.user import FrindResource, UserLoginResource, UserReigsterResource
 
 app = Flask(__name__)
 
@@ -23,6 +23,8 @@ api.add_resource(UserLoginResource,'/user/login')
 api.add_resource(MemoReigsterResource,'/memo')
 
 api.add_resource(MemoResource,'/memo/<int:Memo_id>')
+
+api.add_resource(FrindResource,'/user/<int:user_id>')
 
 if __name__ == '__main__' :
     app.run()

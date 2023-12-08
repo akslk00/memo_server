@@ -40,11 +40,18 @@ class MemoReigsterResource(Resource):
     @jwt_required()
     def get(self):
         user_id=get_jwt_identity()
+
+        # 쿼리스트링 (쿼리 파라미터)를 통해서 
+        # 데이터를 받아온다
+        offset=request.args.get('offset')
+        limit=request.args.get('limit')
+
         try :
             connection = get_connection()
-            query = '''select*
+            query = '''select id,title,date,content
                         from Memo
-                        where userId=%s;'''
+                        where userId=%s
+                        order by date;'''
             record =(user_id,)
 
             cursor = connection.cursor(dictionary= True)
@@ -53,11 +60,9 @@ class MemoReigsterResource(Resource):
             result_list = cursor.fetchall()
             print(result_list)
 
-            i =0
+            i = 0
             for row in result_list:
                 result_list[i]['date']=row['date'].isoformat()
-                result_list[i]['createdAt']=row['createdAt'].isoformat()
-                result_list[i]['updateAt']=row['updateAt'].isoformat()
                 i = i + 1
             
             cursor.close()
@@ -85,9 +90,10 @@ class MemoResource(Resource):
             connection = get_connection()
             query = '''update Memo
                         set title=%s,
+                            date = %s,
                             content = %s
                         where id=%s and userId=%s;'''
-            record =(data['title'],data['content'],Memo_id,user_id)
+            record =(data['title'],data['date'],data['content'],Memo_id,user_id)
 
             cursor = connection.cursor()
             cursor.execute(query,record)

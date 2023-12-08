@@ -1,5 +1,5 @@
 from flask import request
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 from flask_restful import Resource
 from mysql_connection import get_connection
 from mysql.connector import Error
@@ -88,3 +88,59 @@ class UserLoginResource(Resource):
         return{'result':'success',
                'accessToken':access_token},200
     
+class FrindResource(Resource):
+     
+    @jwt_required()
+    def put(self,user_id):
+        try :
+            connection = get_connection()
+            
+            query ='''update user
+                        set frindId= 1
+                        where id = %s ;'''
+            record = (user_id,)
+
+            if user_id == id:
+                return{'error':'dkdlelrkrkxek'}
+            
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e:
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error': str(e)},500
+        
+        return {'result':'success'} ,200
+    
+    @jwt_required()
+    def delete(self,user_id):
+        try :
+            connection = get_connection()
+            
+
+            query ='''update user
+                        set frindId= 0
+                        where id = %s ;'''
+            record = (user_id,)
+            
+            
+            cursor = connection.cursor()
+            cursor.execute(query, record)
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e:
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'error': str(e)},500
+    
+        return {'result':'success'} ,200
